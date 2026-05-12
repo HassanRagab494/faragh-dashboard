@@ -9,6 +9,7 @@ interface TeamMember {
   name: string;
   role: string;
   avatar: string;
+  description: string;
   status: string;
 }
 
@@ -16,7 +17,7 @@ export default function TeamManager() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", role: "", avatar: "", status: "Active" });
+  const [form, setForm] = useState({ name: "", role: "", avatar: "", description: "", status: "Active" }); // ✅
   const [previewUrl, setPreviewUrl] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +61,7 @@ export default function TeamManager() {
       const newMember = await res.json();
       setTeam([...team, newMember]);
       setShowModal(false);
-      setForm({ name: "", role: "", avatar: "", status: "Active" });
+      setForm({ name: "", role: "", avatar: "", description: "", status: "Active" }); // ✅
       setPreviewUrl("");
       setImageFile(null);
     } finally {
@@ -117,9 +118,13 @@ export default function TeamManager() {
               )}></div>
             </div>
 
-            <div className="space-y-1 mb-6">
+            <div className="space-y-1 mb-4">
               <h3 className="text-lg font-bold font-arabic group-hover:neon-text transition-all">{member.name}</h3>
               <p className="text-[10px] text-cream/40 uppercase tracking-widest font-sans">{member.role}</p>
+              {/* ✅ الوصف */}
+              {member.description && (
+                <p className="text-xs text-cream/30 font-arabic mt-2 px-2 leading-relaxed">{member.description}</p>
+              )}
             </div>
 
             <div className="flex items-center justify-around py-3 border-t border-white/5">
@@ -165,7 +170,7 @@ export default function TeamManager() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={e => e.stopPropagation()}
-              className="glass-card w-full max-w-md mx-4"
+              className="glass-card w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
               dir="rtl"
             >
               <div className="flex items-center justify-between mb-6">
@@ -211,6 +216,17 @@ export default function TeamManager() {
                     onChange={e => setForm({ ...form, role: e.target.value })}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon/50 transition-all"
                     placeholder="Creative Director"
+                  />
+                </div>
+
+                {/* ✅ حقل الوصف */}
+                <div>
+                  <label className="text-xs text-cream/50 mb-2 block font-arabic">الوصف</label>
+                  <textarea
+                    value={form.description}
+                    onChange={e => setForm({ ...form, description: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-neon/50 transition-all resize-none h-20"
+                    placeholder="وصف قصير عن العضو..."
                   />
                 </div>
 
